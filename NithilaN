@@ -1,0 +1,315 @@
+<?php
+$emailSent = null; // Initialize email sent variable
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Collect and sanitize input
+    $name = htmlspecialchars(trim($_POST['name']));
+    $email = htmlspecialchars(trim($_POST['email']));
+    $message = htmlspecialchars(trim($_POST['message']));
+
+    // Define the recipient email address
+    $to = 'nithilanallasivan@gmail.com'; // Your email address
+    $subject = 'New Contact Form Submission';
+
+    // Create the email body
+    $body = "Name: $name\nEmail: $email\nMessage:\n$message";
+    $headers = "From: $email";
+
+    // Send the email
+    if (mail($to, $subject, $body, $headers)) {
+        $emailSent = true;
+    } else {
+        $emailSent = false;
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NithilaN</title>
+    <style>
+        /* CSS Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+        header {
+            background: #000;
+            color: #fff;
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s, transform 0.2s;
+        }
+        nav ul li a:hover {
+            color: #ccc;
+            transform: scale(1.1);
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+            opacity: 0; /* Start hidden for fade-in effect */
+            transform: translateY(20px); /* Move down for entrance effect */
+            transition: opacity 0.5s ease, transform 0.5s ease; /* Fade-in effect */
+        }
+        section {
+            width: 100%;
+            padding: 20px;
+            border-bottom: 1px solid #d3d3d3;
+            transition: background 0.3s; /* Background transition on hover */
+        }
+        section:last-of-type {
+            border-bottom: none;
+        }
+        section:hover {
+            background: #f0f0f0; /* Lighten background on hover */
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #000;
+            text-align: center;
+        }
+        h2 {
+            font-size: 28px;
+            margin: 20px 0 10px;
+            color: #000;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        footer {
+            text-align: center;
+            padding: 15px 0;
+            background: #000;
+            color: #fff;
+            margin-top: 20px;
+            width: 100%;
+        }
+        .card {
+            background: #fff;
+            border: 1px solid #d3d3d3;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s; /* Scale and shadow on hover */
+        }
+        .card:hover {
+            transform: translateY(-5px); /* Lift card on hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .icons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .icon {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: #000;
+            transition: color 0.2s;
+        }
+        .icon:hover {
+            color: #3498db; /* Change color on hover */
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        form input, form textarea {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #d3d3d3;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+        form input:focus, form textarea:focus {
+            border-color: #3498db; /* Change border color on focus */
+            outline: none; /* Remove default outline */
+        }
+        form button {
+            padding: 10px;
+            border: none;
+            background: #000;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s; /* Background and scale effect */
+        }
+        form button:hover {
+            background: #3498db;
+            transform: scale(1.05); /* Slightly enlarge button on hover */
+        }
+        .profile-pic {
+            width: 150px; /* Adjust the width as needed */
+            border-radius: 50%; /* Circular image */
+            margin-bottom: 20px; /* Spacing below the image */
+        }
+    </style>
+    <script>
+        const blogPost1 = {
+            views: localStorage.getItem('viewsPost1') ? parseInt(localStorage.getItem('viewsPost1')) : 0,
+            likes: localStorage.getItem('likesPost1') ? parseInt(localStorage.getItem('likesPost1')) : 0
+        };
+
+        const blogPost2 = {
+            views: localStorage.getItem('viewsPost2') ? parseInt(localStorage.getItem('viewsPost2')) : 0,
+            likes: localStorage.getItem('likesPost2') ? parseInt(localStorage.getItem('likesPost2')) : 0
+        };
+
+        function showPage(page) {
+            const sections = document.querySelectorAll('section');
+            sections.forEach(section => {
+                section.style.display = 'none';
+            });
+            const activeSection = document.getElementById(page);
+            if (activeSection) {
+                activeSection.style.display = 'block';
+            }
+
+            if (page === 'blog') {
+                incrementViews();
+                updateLikeCounts();
+            }
+        }
+
+        function incrementViews() {
+            blogPost1.views += 1;
+            blogPost2.views += 1;
+
+            localStorage.setItem('viewsPost1', blogPost1.views);
+            localStorage.setItem('viewsPost2', blogPost2.views);
+
+            document.getElementById('viewCount1').innerText = blogPost1.views;
+            document.getElementById('viewCount2').innerText = blogPost2.views;
+        }
+
+        function incrementLikes(post) {
+            if (post === 'post1' && !localStorage.getItem('likedPost1')) {
+                blogPost1.likes += 1;
+                localStorage.setItem('likesPost1', blogPost1.likes);
+                localStorage.setItem('likedPost1', 'true');
+                document.getElementById('likeCount1').innerText = blogPost1.likes;
+            }
+            if (post === 'post2' && !localStorage.getItem('likedPost2')) {
+                blogPost2.likes += 1;
+                localStorage.setItem('likesPost2', blogPost2.likes);
+                localStorage.setItem('likedPost2', 'true');
+                document.getElementById('likeCount2').innerText = blogPost2.likes;
+            }
+        }
+
+        function updateLikeCounts() {
+            document.getElementById('likeCount1').innerText = blogPost1.likes;
+            document.getElementById('likeCount2').innerText = blogPost2.likes;
+        }
+
+        // Fade-in effect for main content
+        document.addEventListener("DOMContentLoaded", function() {
+            const mainContent = document.querySelector("main");
+            mainContent.style.opacity = 1;
+            mainContent.style.transform = "translateY(0)";
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#" onclick="showPage('home')">Home</a></li>
+                <li><a href="#" onclick="showPage('about')">About</a></li>
+                <li><a href="#" onclick="showPage('blog')">Blog</a></li>
+                <li><a href="#" onclick="showPage('resume')">Resume</a></li>
+                <li><a href="#" onclick="showPage('contact')">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="home" style="display: block;">
+            <h1>NithilaN</h1>
+<img src="path/to/your/image.jpg" alt="Your Picture" class="profile-pic"> <!-- Replace with your image path -->
+            <h2>Student</h2>
+            <p>Welcome to my personal website. I am passionate about technology and design.</p>
+        </section>
+        <section id="about" style="display: none;">
+            <h2>About Me</h2>
+            <p>I am a dedicated student eager to learn and grow in the tech industry.</p>
+        </section>
+        <section id="blog" style="display: none;">
+            <h2>Blog</h2>
+            <div class="card">
+                <h3>Blog Post 1</h3>
+                <p>This is the content of blog post 1.</p>
+                <div class="icons">
+                    <div class="icon" onclick="incrementLikes('post1')">
+                        ❤️ (<span id="likeCount1"><?php echo $blogPost1['likes']; ?></span>)
+                    </div>
+                    <div class="icon">
+                        👁️ <span id="viewCount1"><?php echo $blogPost1['views']; ?></span>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Blog Post 2</h3>
+                <p>This is the content of blog post 2.</p>
+                <div class="icons">
+                    <div class="icon" onclick="incrementLikes('post2')">
+                        ❤️ (<span id="likeCount2"><?php echo $blogPost2['likes']; ?></span>)
+                    </div>
+                    <div class="icon">
+                        👁️ <span id="viewCount2"><?php echo $blogPost2['views']; ?></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="resume" style="display: none;">
+            <h2>My Resume</h2>
+            <p>Here you can view my professional experience and skills.</p>
+            <a href="path/to/your/resume.pdf" download>Download Resume</a>
+        </section>
+        <section id="contact" style="display: none;">
+            <h2>Contact Me</h2>
+            <form method="POST" action="">
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <textarea name="message" rows="4" placeholder="Your Message" required></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+            <?php if ($emailSent !== null): ?>
+                <p><?php echo $emailSent ? 'Message sent successfully!' : 'Failed to send message.'; ?></p>
+            <?php endif; ?>
+        </section>
+        <footer>
+            <p>&copy; 2024 NithilaN. All rights reserved.</p>
+        </footer>
+    </main>
+</body>
+</html>
